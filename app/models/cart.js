@@ -2,16 +2,12 @@
 
 const mongoose = require('mongoose')
 
-const productSchema = new mongoose.Schema({
-  productName: {
-    type: String,
+const cartSchema = new mongoose.Schema({
+  pastOrder: {
+    type: Array,
     required: true
   },
-  productPrice: {
-    type: Number,
-    required: true
-  },
-  productQuantity: {
+  orderTotal: {
     type: Number,
     required: true
   },
@@ -31,10 +27,6 @@ const productSchema = new mongoose.Schema({
   }
 })
 
-// exampleSchema.virtual('length').get(function length () {
-//   return this.text.length
-// })
+const Cart = mongoose.model('Cart', cartSchema)
 
-const Product = mongoose.model('Example', productSchema)
-
-module.exports = Product
+module.exports = Cart

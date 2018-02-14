@@ -9,7 +9,7 @@ module.exports = require('lib/wiring/routes')
 
 // standards RESTful routes
 .resources('examples')
-.resources('products', {only: ['index', 'show', 'create', 'update']})
+.resources('carts', {only: ['index', 'show', 'create', 'update']})
 
 // users of the app have special requirements
 .post('/sign-up', 'users#signup')
