@@ -5,6 +5,7 @@ const debug = require('debug')('express-api-template:users')
 const controller = require('lib/wiring/controller')
 const models = require('app/models')
 const User = models.user
+const keySecret = process.env.SECRET_STRIPE_KEY
 
 const crypto = require('crypto')
 
@@ -13,6 +14,8 @@ const authenticate = require('./concerns/authenticate')
 const HttpError = require('lib/wiring/errors/http-error')
 
 const MessageVerifier = require('lib/wiring/message-verifier')
+
+const stripe = require('stripe')(keySecret)
 
 const encodeToken = (token) => {
   const mv = new MessageVerifier('secure-token', process.env.SECRET_KEY)
@@ -108,13 +111,39 @@ const changepw = (req, res, next) => {
   ).catch(makeErrorHandler(res, next))
 }
 
+const charge = (req, res, next) => {
+  // Future amount should get in by adding cart prices together
+  const amount = 500
+
+  console.log('the body is', req.body)
+
+  stripe.customers.create({
+    email: req.body.stripeEmail,
+    source: req.body.stripeToken
+  })
+  .then(customer => {
+    console.log('this is a customer: ', customer)
+    return stripe.charges.create({
+      amount,
+      description: 'Sample Charge',
+      currency: 'usd',
+      customer: customer.id
+    })
+  })
+  .then(charge => {
+    console.log('this is a charge: ', charge)
+  })
+  .then(next)
+}
+
 module.exports = controller({
   index,
   show,
   signup,
   signin,
   signout,
-  changepw
+  changepw,
+  charge
 }, { before: [
-  { method: authenticate, except: ['signup', 'signin'] }
+  { method: authenticate, except: ['signup', 'signin', 'charge'] }
 ] })
