@@ -71,9 +71,15 @@ const destroy = (req, res, next) => {
 
 const charge = (req, res, next) => {
   // Future amount should get in by adding cart prices together
+<<<<<<< HEAD
   // const amount = 500
 
   // console.log('the req is', req)
+=======
+  // const amount = amount
+
+  console.log(req)
+>>>>>>> - Made change to charge method in carts controller
 
   stripe.customers.create({
     email: req.body.email,
