@@ -7,7 +7,9 @@ const Cart = models.cart
 const authenticate = require('./concerns/authenticate')
 const setUser = require('./concerns/set-current-user')
 const setModel = require('./concerns/set-mongoose-model')
+const stripe = require('stripe')('sk_test_hNfSbTYlJXKPgq07KvOUGBvC')
 
+let amount
 const index = (req, res, next) => {
   // console.log('user is', req.user)
   // console.log('req is', req)
@@ -29,6 +31,7 @@ const show = (req, res) => {
 const create = (req, res, next) => {
   // debugger
   // console.log(req.body.carts)
+  amount = req.body.cart.orderTotal
   const cart = Object.assign(req.body.cart, {
     _owner: req.user._id
   })
@@ -49,6 +52,7 @@ const update = (req, res, next) => {
   // console.log('req body cart', req.body.cart)
   // console.log('res is', res)
   // console.log('res body', res.body)
+  amount = req.body.cart.orderTotal
 
   delete req.body.cart._owner  // disallow owner reassignment.
 
@@ -65,12 +69,38 @@ const destroy = (req, res, next) => {
     .catch(next)
 }
 
+const charge = (req, res, next) => {
+  // Future amount should get in by adding cart prices together
+  const amount = 500
+
+  console.log('the body is', req.body)
+
+  stripe.customers.create({
+    email: req.body.stripeEmail,
+    source: req.body.stripeToken
+  })
+  .then(customer => {
+    console.log('this is a customer: ', customer)
+    return stripe.charges.create({
+      amount,
+      description: 'Sample Charge',
+      currency: 'usd',
+      customer: customer.id
+    })
+  })
+  .then(charge => {
+    console.log('this is a charge: ', charge)
+  })
+  .then(next)
+}
+
 module.exports = controller({
   index,
   show,
   create,
   update,
-  destroy
+  destroy,
+  charge
 }, { before: [
   { method: setUser, only: ['index', 'show'] },
   { method: authenticate, only: ['index', 'show', 'create', 'update', 'destroy'] },
