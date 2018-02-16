@@ -71,9 +71,9 @@ const destroy = (req, res, next) => {
 
 const charge = (req, res, next) => {
   // Future amount should get in by adding cart prices together
-  const amount = 500
+  // const amount = 500
 
-  console.log('the body is', req.body)
+  // console.log('the body is', req.body)
 
   stripe.customers.create({
     email: req.body.stripeEmail,
@@ -83,15 +83,19 @@ const charge = (req, res, next) => {
     console.log('this is a customer: ', customer)
     return stripe.charges.create({
       amount,
-      description: 'Sample Charge',
+      description: 'Store Payment',
       currency: 'usd',
       customer: customer.id
     })
   })
   .then(charge => {
-    console.log('this is a charge: ', charge)
+    // console.log('this is a charge: ', charge)
+
   })
-  .then(next)
+  .then(() => {
+    res.sendStatus(204)
+  })
+  .catch(next)
 }
 
 module.exports = controller({
