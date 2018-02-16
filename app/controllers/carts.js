@@ -73,15 +73,15 @@ const charge = (req, res, next) => {
   // Future amount should get in by adding cart prices together
   // const amount = 500
 
-  console.log('the req is', req)
+  // console.log('the req is', req)
 
   stripe.customers.create({
     email: req.body.email,
     source: req.body.id
   })
   .then(customer => {
-    console.log('this is a customer: ', customer)
-    console.log(amount)
+    // console.log('this is a customer: ', customer)
+    // console.log(amount)
     return stripe.charges.create({
       amount,
       description: 'Store Payment',
