@@ -11,9 +11,6 @@ const stripe = require('stripe')('sk_test_hNfSbTYlJXKPgq07KvOUGBvC')
 
 let amount
 const index = (req, res, next) => {
-  // console.log('user is', req.user)
-  // console.log('req is', req)
-
   Cart.find({_owner: req.user.id})
     .then(carts => res.json({
       carts: carts.map((e) =>
@@ -29,8 +26,6 @@ const show = (req, res) => {
 }
 
 const create = (req, res, next) => {
-  // debugger
-  // console.log(req.body.carts)
   amount = req.body.cart.orderTotal
   const cart = Object.assign(req.body.cart, {
     _owner: req.user._id
@@ -45,16 +40,9 @@ const create = (req, res, next) => {
 }
 
 const update = (req, res, next) => {
-  // console.log('req is', req)
-  // console.log('req body is', req.body)
-  // console.log('req cart is', req.cart)
-  // console.log('req user is', req.user)
-  // console.log('req body cart', req.body.cart)
-  // console.log('res is', res)
-  // console.log('res body', res.body)
   amount = req.body.cart.orderTotal
 
-  delete req.body.cart._owner  // disallow owner reassignment.
+  delete req.body.cart._owner
 
   req.cart.update(req.body.cart)
     .then((cart) => res.sendStatus(204)
@@ -65,26 +53,17 @@ const update = (req, res, next) => {
 }
 
 const destroy = (req, res, next) => {
-  // console.log('req is', req)
-
   req.cart.remove()
     .then(() => res.sendStatus(204))
     .catch(next)
 }
 
 const charge = (req, res, next) => {
-  // Future amount should get in by adding cart prices together
-  // const amount = 500
-
-  // console.log('the req is', req)
-
   stripe.customers.create({
     email: req.body.email,
     source: req.body.id
   })
   .then(customer => {
-    // console.log('this is a customer: ', customer)
-    // console.log(amount)
     return stripe.charges.create({
       amount,
       description: 'Store Payment',
