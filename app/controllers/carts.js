@@ -57,9 +57,9 @@ const update = (req, res, next) => {
   delete req.body.cart._owner  // disallow owner reassignment.
 
   req.cart.update(req.body.cart)
-    .then(() => res.sendStatus(204)
+    .then((cart) => res.sendStatus(204)
     .json({
-      book: req.cart.toJSON({ virtuals: true, user: req.user })
+      cart: req.cart.toJSON({ virtuals: true, user: req.user })
     }))
     .catch(next)
 }
