@@ -17,14 +17,14 @@ const index = (req, res, next) => {
   Cart.find({_owner: req.user.id})
     .then(carts => res.json({
       carts: carts.map((e) =>
-      e.toJSON({user: req.user}))
+      e.toJSON({ virtuals: true, user: req.user }))
     }))
     .catch(next)
 }
 
 const show = (req, res) => {
   res.json({
-    cart: req.cart.toJSON({ user: req.user })
+    cart: req.cart.toJSON({ virtuals: true, user: req.user })
   })
 }
 
@@ -39,7 +39,7 @@ const create = (req, res, next) => {
     .then(cart =>
       res.status(201)
         .json({
-          cart: cart.toJSON({ user: req.user })
+          cart: cart.toJSON({ virtuals: true, user: req.user })
         }))
     .catch(next)
 }
@@ -57,7 +57,10 @@ const update = (req, res, next) => {
   delete req.body.cart._owner  // disallow owner reassignment.
 
   req.cart.update(req.body.cart)
-    .then(() => res.sendStatus(204))
+    .then(() => res.sendStatus(204)
+    .json({
+      book: req.cart.toJSON({ virtuals: true, user: req.user })
+    }))
     .catch(next)
 }
 
@@ -71,15 +74,9 @@ const destroy = (req, res, next) => {
 
 const charge = (req, res, next) => {
   // Future amount should get in by adding cart prices together
-<<<<<<< HEAD
   // const amount = 500
 
   // console.log('the req is', req)
-=======
-  // const amount = amount
-
-  console.log(req)
->>>>>>> - Made change to charge method in carts controller
 
   stripe.customers.create({
     email: req.body.email,
