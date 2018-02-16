@@ -12,11 +12,11 @@ Planning/Process/Problem-Solving:
 
 1) Set up Express API template and Heroku cloud application based on documentation guidelines.
 2) Created routes to carts controller CRUD actions in config/routes.js.
-3) Developed carts controller CRUD actions. Preset authentication for all actions to ensure that interaction with the carts database can only be performed by signed in users.
+3) Developed carts controller CRUD actions. Preset authentication for all actions to ensure that interaction with the carts collection can only be performed by signed in users.
 4) Preset setUser method for index and show actions so that user.id attribute can be used to filter ownership of carts resources to the signed in user. This ensures that a user can only view(Read) his/her past order history.
-5) Create method in carts controller returns JSON of the newly created cart object to the client. The id of the newly created cart object is then used for AJAX updates to the cart, including when a quantity is changed or when a purchase is completed. The cart id is also used to delete the created item from the carts document when an order is cancelled.
+5) Create method in carts controller returns JSON of the newly created cart object to the client. The id of the newly created cart object is then used for AJAX updates to the cart, including when a quantity is changed or when a purchase is completed. The cart id is also used to delete the created document from the carts collection when an order is cancelled.
 6) Update method in carts controller deletes the _owner attribute from the cart body being updated. This ensures that ownership is not reassigned to any other user (from the one logged in).
-7) The delete method from the carts controller removes the cart object from the carts document (happens after checkout and before purchase of cart items).
+7) The delete method from the carts controller removes the cart document from the carts controller (happens after checkout and before purchase of cart items).
 8) Debugged and tested Auth curl scripts for sign-up, sign-in, change-password and sign-out.
 9) Developed, debugged and tested curl scripts for the carts resource.
 10) Created a virtual attribute for the cart model schema which returns the order total as a dollar value. Virtuals are set to true for carts controller create, update and read actions so that the orderTotalUSD field is displayed as JSON for use in the front end.
