@@ -1,32 +1,43 @@
 Application
 
-The back end API of the E-Commerce project, built using Node's Express web application framework. This API comprises of the MVC layer performing CRUD operations on MongoDB's Mongoose database model. Client Repo - //to be filled//
+The back end API of the E-Commerce project, built using Node's Express web application framework. This API comprises the MVC layer performing CRUD operations on MongoDB's Mongoose database model. Client Repo - https://github.com/SuperMegaAwesome/client
 
 Technologies Used:
 
-JavaScript
-Node.js Express framework
-Mongoose
+1) JavaScript
+2) Node.js Express framework
+3) MongoDB Mongoose database model
 
-Unsolved Problems:
-1) Convert total amount value from cents to USD for display on the front-end purchase history (potentially at server side).
+Planning/Process/Problem-Solving:
 
-Planning:
 1) Set up Express API template and Heroku cloud application based on documentation guidelines.
 2) Created routes to carts controller CRUD actions in config/routes.js.
-3)
+3) Developed carts controller CRUD actions. Preset authentication for all actions to ensure that interaction with the carts database can only be performed by signed in users.
+4) Preset setUser method for index and show actions so that user.id attribute can be used to filter ownership of carts resources to the signed in user. This ensures that a user can only view(Read) his/her past order history.
+5) Create method in carts controller returns JSON of the newly created cart object to the client. The id of the newly created cart object is then used for AJAX updates to the cart, including when a quantity is changed or when a purchase is completed. The cart id is also used to delete the created item from the carts document when an order is cancelled.
+6) Update method in carts controller deletes the _owner attribute from the cart body being updated. This ensures that ownership is not reassigned to any other user (from the one logged in).
+7) The delete method from the carts controller removes the cart object from the carts document (happens after checkout and before purchase of cart items).
+8) Debugged and tested Auth curl scripts for sign-up, sign-in, change-password and sign-out.
+9) Developed, debugged and tested curl scripts for the carts resource.
+10) Created a virtual attribute for the cart model schema which returns the order total as a dollar value. Virtuals are set to true for carts controller create, update and read actions so that the orderTotalUSD field is displayed as JSON for use in the front end.
+10) Integrated Stripe checkout logic to carts controller:
+  i) Added a post route to the charge method of the carts controller to create a new purchase on the Stripe API when the action is called.
+  ii) amount in charge method of carts controller is declared as a global variable. This value represents the order total, in cents, of the cart items and is set in create/update methods of carts controller before being passed to the Stripe API, which accepts payment only in cents.
 
-Changed code in index method of Sightings controller to ensure that JSON data obtained from the sightings table is parsed in descending order of id. This ensures that new records created move to the top of the table when displayed in the client application.
-Changed controller sighting code to use current_user read attr for create, update and delete actions.
-Changed model sighting code to ensure user ownership.
-create_sightings migration contains user_id field as a foreign key constraint that references user table.
-Ran database migrations on rails, before deploying to heroku, and running heroku database migrations. Restarted heroku application to ensure deployed code is refreshed.
-Problem solving:
+Server Deployed Path: https://powerful-cove-92841.herokuapp.com/
 
-I worked primarily on the MVP. Therefore, I did not encounter too many issues after scaffolding the MVC layers. However, I would reference documentation on the MVC structure when I ran into issues and also use online forums, such as stack overflow to resolve commonplace issues. I posted an issue on the Full Stack project issues queue when I ran into internal server issues during heroku deployment.
-
-Server Deployed Path: https://glacial-woodland-13268.herokuapp.com
-
-Client Deployed Path: https://axb6452.github.io/BirdWatcherClient
+Client Deployed Path: https://SuperMegaAwesome.github.io/client
 
 ERD: https://www.lucidchart.com/documents/edit/fd75a490-97c0-49bd-be18-b16005c26383/0?shared=true&
+
+Route Catalog:
+
+.root('root#root')
+.resources('examples')
+.resources('carts', {only: ['index', 'show', 'create', 'update', 'destroy']})
+.post('/sign-up', 'users#signup')
+.post('/sign-in', 'users#signin')
+.delete('/sign-out/:id', 'users#signout')
+.patch('/change-password/:id', 'users#changepw')
+.resources('users', { only: ['index', 'show'] })
+.post('/charge', 'carts#charge')
