@@ -46,9 +46,10 @@ const update = (req, res, next) => {
 
   req.cart.update(req.body.cart)
     .then((cart) => res.sendStatus(204)
-    .json({
-      cart: req.cart.toJSON({ virtuals: true, user: req.user })
-    }))
+      // .json({
+      //   cart: req.cart.toJSON({ virtuals: true, user: req.user })
+      // })
+    )
     .catch(next)
 }
 
