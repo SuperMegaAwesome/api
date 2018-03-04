@@ -8,7 +8,7 @@ module.exports = require('lib/wiring/routes')
 .root('root#root')
 
 // standards RESTful routes
-.resources('examples')
+// .resources('examples')
 .resources('carts', {only: ['index', 'show', 'create', 'update', 'destroy']})
 
 // users of the app have special requirements
